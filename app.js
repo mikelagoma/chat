@@ -6,10 +6,29 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 
+var mongo = require('mongodb');
+var monk = require('monk');
+var db = monk('mongodb://heroku_cj78v9z6:qfh9h8ri87fd1jtrsrg2hp86o0@ds231588.mlab.com:31588/heroku_cj78v9z6');
+
 var index = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+
+// ORM is overkill
+// //Set up mongoose connection
+// var mongoose = require('mongoose');
+// var mongoDB = 'mongodb://heroku_cj78v9z6:qfh9h8ri87fd1jtrsrg2hp86o0@ds231588.mlab.com:31588/heroku_cj78v9z6';
+// mongoose.connect(mongoDB);
+// mongoose.Promise = global.Promise;
+// var db = mongoose.connection;
+// db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+// Make our db accessible to our router
+app.use(function(req,res,next){
+    req.db = db;
+    next();
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

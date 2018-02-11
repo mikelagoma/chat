@@ -1,13 +1,29 @@
-// Generate random room name if needed
-if (!location.hash) {
-  location.hash = Math.floor(Math.random() * 0xFFFFFF).toString(16);
-}
-const roomHash = location.hash.substring(1);
+// // Generate random room name if needed
+// if (!location.hash) {
+//   location.hash = Math.floor(Math.random() * 0xFFFFFF).toString(16);
+// }
+// const roomHash = location.hash.substring(1);
 
 // TODO: Replace with your own channel ID
 const drone = new ScaleDrone('yiS12Ts5RdNhebyM');
+
+// generate random user id
+// /users/connect?id=^^ api to get roomname
+// 
+var ID = function () {
+  // Math.random should be unique because of its seeding algorithm.
+  // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+  // after the decimal.
+  return '_' + Math.random().toString(36).substr(2, 9);
+};
+var httpRequest = new XMLHttpRequest();
+console.log('/users/connect?id=' + ID());
+httpRequest.open('GET', '/users/connect?id=' + ID());
+httpRequest.send();
+
+
 // Room name needs to be prefixed with 'observable-'
-const roomName = 'observable-' + roomHash;
+const roomName = 'observable-' + 'blah';
 const configuration = {
   iceServers: [{
     urls: 'stun:stun.l.google.com:19302'
@@ -15,6 +31,8 @@ const configuration = {
 };
 let room;
 let pc;
+
+
 
 
 function onSuccess() {};
@@ -37,7 +55,7 @@ drone.on('open', error => {
   room.on('members', members => {
     console.log('MEMBERS', members);
     // If we are the second user to connect to the room we will be creating the offer
-    const isOfferer = members.length === 2;
+    const isOfferer = members.length === (2 || 3 || 4);
     startWebRTC(isOfferer);
   });
 });
