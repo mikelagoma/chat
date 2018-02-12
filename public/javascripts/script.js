@@ -32,9 +32,6 @@ const configuration = {
 let room;
 let pc;
 
-
-
-
 function onSuccess() {};
 function onError(error) {
   console.error(error);

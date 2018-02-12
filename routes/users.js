@@ -135,7 +135,7 @@ function shuffleArray(array) {
   }
 }
 
-router.get('/currentusers', function(req, res) {
+router.get('/assignrooms', function(req, res) {
   var db = req.db;
   var results = Array();
   const findDocuments = function(db, callback) {
@@ -144,7 +144,7 @@ router.get('/currentusers', function(req, res) {
     // Find some documents
     console.log('running query')
     var t = new Date();
-    t.setMinutes(t.getMinutes() - 1);
+    t.setMinutes(t.getMinutes() - 100);
     console.log(t)
     collection.find({ _id: { 
           $gt: objectIdWithTimestamp(t) 
@@ -158,6 +158,12 @@ router.get('/currentusers', function(req, res) {
       // roomIds = _.range(docs.length / 2)
       roomIds = [...Array(docs.length).keys()];
       for (var i = 0; i < docs.length; i++) {
+        var myquery = { username: docs[i].username };
+        var newvalues = { $set: {room: roomIds[Math.floor(i/2)] } };
+        collection.update(myquery, newvalues, function(err, res) {
+          if (err) throw err;
+          console.log("1 document updated");
+        });
         docs[i].room =roomIds[Math.floor(i/2)]
       }
       res.render('userlist', {
