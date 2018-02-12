@@ -5,7 +5,7 @@
 // const roomHash = location.hash.substring(1);
 
 // TODO: Replace with your own channel ID
-const drone = new ScaleDrone('yiS12Ts5RdNhebyM');
+// const drone = new ScaleDrone('yiS12Ts5RdNhebyM');
 
 // generate random user id
 // /users/connect?id=^^ api to get roomname
@@ -16,11 +16,11 @@ var ID = function () {
   // after the decimal.
   return '_' + Math.random().toString(36).substr(2, 9);
 };
+console.log('in client script')
 var httpRequest = new XMLHttpRequest();
 console.log('/users/connect?id=' + ID());
 httpRequest.open('GET', '/users/connect?id=' + ID());
 httpRequest.send();
-
 
 // Room name needs to be prefixed with 'observable-'
 const roomName = 'observable-' + 'blah';

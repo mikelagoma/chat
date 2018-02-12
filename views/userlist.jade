@@ -1,0 +1,7 @@
+extends layout
+
+block content
+    h1= title
+    each user in users
+        li= user._id.getTimestamp() + '\\n' + user.username + '\\n' + user.room
+        //-JSON.stringify(user.name)
