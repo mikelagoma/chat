@@ -17,11 +17,57 @@ var ID = function () {
   return '_' + Math.random().toString(36).substr(2, 9);
 };
 console.log('in client script')
-var httpRequest = new XMLHttpRequest();
-console.log('/users/connect?id=' + ID());
-httpRequest.open('GET', '/users/connect?id=' + ID());
-httpRequest.send();
+user = ID();
+// alert('generated user' + user)
+// connectUser(user, getRoom(user, getRoomCallback()));
+// connectUser(user, connectUserCallback());
+connectUser(user);
+// getRoom(user, joinRoom)
+function getRoomCallback(userInfo) {
+  // alert('got room!');
+  // alert('got to getRoomCallback');
+  // alert("wat is this? from getRoom "+ userInfo);
+  joinRoom(userInfo)
+}
 
+function connectUserCallback(connectResponse) {
+  // alert('connected!');
+  // alert("connect ready, getting room with " + user);
+  // alert("wat is this? from connectUser "+ connectResponse);
+  getRoom(user)
+}
+
+function connectUser(user) {
+  // alert('/users/connect?id=' + user);
+  // alert("connecting")
+  var httpRequest = new XMLHttpRequest();
+  httpRequest.open('GET', '/users/connect?id=' + user, true);
+  httpRequest.onreadystatechange = function () {
+      if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+        connectUserCallback(httpRequest.responseText);
+      }
+      // alert('waiting for connect');
+    }
+  httpRequest.send();
+};
+// console.log('send request output: ' + test)
+// Do this every minute somehow
+
+function getRoom(user) {
+    // var response, xmlhttp;
+    // alert('/users/' + user + '/room');
+    // alert("Getting room")
+
+    xmlhttp = new XMLHttpRequest;
+    xmlhttp.open('GET', '/users/' + user + '/room', true);
+    xmlhttp.onreadystatechange = function () {
+      if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+        getRoomCallback(xmlhttp.responseText);
+      }
+      // alert('waiting for getroom');
+    }
+    xmlhttp.send();
+}
 // Room name needs to be prefixed with 'observable-'
 const roomName = 'observable-' + 'blah';
 const configuration = {
@@ -129,3 +175,18 @@ function localDescCreated(desc) {
     onError
   );
 }
+
+function joinRoom(response) {
+  // alert("callback function input : " + response);
+  // alert(JSON.parse(response).room)
+  window.location.replace("/users/chat/#" + JSON.parse(response).room);
+}
+
+// (function(){
+//     // do some stuff
+//     var room = Array()
+//     room.push(getRoom(user));
+//     console.log('timeout get room');
+//     console.log(room);
+//     setTimeout(getRoom(user), 4000);
+// })();

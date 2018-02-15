@@ -44,7 +44,6 @@ router.get('/connect', function(req, res) {
     // Set our collection
     var collection = db.get('usercollection');
     // exports.teamlist = function(gname, callback) {  
-    var time = new Date();
     //Submit to the DB
     collection.insert({
         "username" : id,
@@ -59,34 +58,38 @@ router.get('/connect', function(req, res) {
             // And forward to success page
             // res.redirect("chat/" + 1);
             // name of chatroom to send user to
-            res.end("oaieusefh");
+            console.log('assigning rooms at connect api')
+            var a = assignRooms(db);
+            res.send(a);
         }
     });
-    // var users = collection.find();
-    var users1 = function(users, callback) {
-      collection.find({}, {}, function(err, result) {
-        if (err) throw err;
-        console.log('Running query: ' + JSON.stringify(result));
-      });
-    };
-    var users3 = users1(req.users, function(err, blogs) {
-      if (err) { 
-         /* panic! there was an error fetching the list of blogs */
-         console.log("how to call function")
-         return;
-      }
-      // do something with the blogs here ...
-      
-    });
-    console.log('wattt' + users3)
-    users2 = {
-      'test' : 1,
-      'test2' : 'two'
-    };
-    console.log('USERS: ' + JSON.stringify(users3));
-    console.log(users2)
-    // res.redirect('/');
 });
+//Not sure what I'm doing here
+//     // var users = collection.find();
+//     var users1 = function(users, callback) {
+//       collection.find({}, {}, function(err, result) {
+//         if (err) throw err;
+//         console.log('Running query: ' + JSON.stringify(result));
+//       });
+//     };
+//     var users3 = users1(req.users, function(err, blogs) {
+//       if (err) { 
+//          // panic! there was an error fetching the list of blogs 
+//          console.log("how to call function")
+//          return;
+//       }
+//       // do something with the blogs here ...
+      
+//     });
+//     console.log('wattt' + users3)
+//     users2 = {
+//       'test' : 1,
+//       'test2' : 'two'
+//     };
+//     console.log('USERS: ' + JSON.stringify(users3));
+//     console.log(users2)
+//     // res.redirect('/');
+// });
 
 // GET New User page. /
 router.get('/newuser', function(req, res) {
@@ -135,16 +138,43 @@ function shuffleArray(array) {
   }
 }
 
+router.get('/:id/room', function(req, res) {
+  var username = req.params.id;
+  var db = req.db;
+  var results = Array();
+  const findDocuments = function(db, u, callback) {
+  // Get the documents collection
+    const collection = db.get('usercollection');
+    // Find some documents
+    console.log('running query')
+    console.log(u)
+    collection.findOne({ 
+        'username': u
+      }, function(err, docs) {
+      if (err) throw err;
+      // console.log("Found the following records");
+      res.send(docs);
+    });
+  }
+  findDocuments(db, username)
+});
+
 router.get('/assignrooms', function(req, res) {
   var db = req.db;
+  console.log('assigning rooms at assignrooms api')
+  assignRooms(db);
+  res.render('newuser');
+});
+
+function assignRooms(db) {
   var results = Array();
   const findDocuments = function(db, callback) {
   // Get the documents collection
     const collection = db.get('usercollection');
     // Find some documents
-    console.log('running query')
+    console.log('running assign rooms query')
     var t = new Date();
-    t.setMinutes(t.getMinutes() - 100);
+    t.setMinutes(t.getMinutes() - 1);
     console.log(t)
     collection.find({ _id: { 
           $gt: objectIdWithTimestamp(t) 
@@ -157,6 +187,7 @@ router.get('/assignrooms', function(req, res) {
       console.log(docs);
       // roomIds = _.range(docs.length / 2)
       roomIds = [...Array(docs.length).keys()];
+      console.log(roomIds)
       for (var i = 0; i < docs.length; i++) {
         var myquery = { username: docs[i].username };
         var newvalues = { $set: {room: roomIds[Math.floor(i/2)] } };
@@ -166,38 +197,12 @@ router.get('/assignrooms', function(req, res) {
         });
         docs[i].room =roomIds[Math.floor(i/2)]
       }
-      res.render('userlist', {
-        'users' : docs,
-        'roomIds' : roomIds
-      });
     });
   }
   findDocuments(db)
-});
-
-// Something up with my mongo query? returns array already?
-router.get('/currentusers_broken', function(req, res) {
-  var db = req.db;
-  var results = Array();
-  const findDocuments = function(db, callback) {
-    var db = req.db;
-    const collection = db.get('usercollection');
-    // Find some documents
-    console.log('starting find');
-    collection.find({}).toArray(function(err, docs) {
-      assert.equal(err, null);
-      console.log("Found the following records");
-      console.log(docs)
-      callback(docs);
-      res.render('userlist', {
-        'users' : docs
-      });
-    });
-  }
-  findDocuments(db, function() {
-      client.close();
-  });
-});
+  var a = 'assignRooms return'
+  return a
+};
 
 
 module.exports = router;
