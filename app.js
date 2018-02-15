@@ -9,7 +9,6 @@ var bodyParser = require('body-parser');
 var mongo = require('mongodb');
 var monk = require('monk');
 var db = monk('mongodb://heroku_cj78v9z6:qfh9h8ri87fd1jtrsrg2hp86o0@ds231588.mlab.com:31588/heroku_cj78v9z6');
-
 var index = require('./routes/index');
 var users = require('./routes/users');
 

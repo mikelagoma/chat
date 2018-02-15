@@ -1,27 +1,31 @@
-// // Generate random room name if needed
-// if (!location.hash) {
-//   location.hash = Math.floor(Math.random() * 0xFFFFFF).toString(16);
-// }
-// const roomHash = location.hash.substring(1);
-
-// TODO: Replace with your own channel ID
-const drone = new ScaleDrone('yiS12Ts5RdNhebyM');
-
-// generate random user id
-// /users/connect?id=^^ api to get roomname
-// 
 var ID = function () {
   // Math.random should be unique because of its seeding algorithm.
   // Convert it to base 36 (numbers + letters), and grab the first 9 characters
   // after the decimal.
   return '_' + Math.random().toString(36).substr(2, 9);
 };
-console.log('in client script')
-user = ID();
+
+// // Generate random room name if needed
+if (!location.hash) {
+  // location.hash = Math.floor(Math.random() * 0xFFFFFF).toString(16);
+  console.log('in client script')
+  user = ID();
+  connectUser(user)
+}
+const roomHash = location.hash.substring(1);
+
+// TODO: Replace with your own channel ID
+const drone = new ScaleDrone('yiS12Ts5RdNhebyM');
+
+// generate random user id
+// /users/connect?id=^^ api to get roomName
+// 
+
+
 // alert('generated user' + user)
 // connectUser(user, getRoom(user, getRoomCallback()));
 // connectUser(user, connectUserCallback());
-connectUser(user);
+// connectUser(user);
 // getRoom(user, joinRoom)
 function getRoomCallback(userInfo) {
   // alert('got room!');
@@ -69,7 +73,7 @@ function getRoom(user) {
     xmlhttp.send();
 }
 // Room name needs to be prefixed with 'observable-'
-const roomName = 'observable-' + 'blah';
+const roomName = 'observable-' + roomHash;
 const configuration = {
   iceServers: [{
     urls: 'stun:stun.l.google.com:19302'
@@ -179,7 +183,7 @@ function localDescCreated(desc) {
 function joinRoom(response) {
   // alert("callback function input : " + response);
   // alert(JSON.parse(response).room)
-  window.location.replace("/users/chat/#" + JSON.parse(response).room);
+  window.location.replace("/users/chat/?id=" + user + "#" + JSON.parse(response).room);
 }
 
 // (function(){
